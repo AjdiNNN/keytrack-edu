@@ -1,5 +1,4 @@
 <?php
-require 'flight/Flight.php';
 require 'vendor/autoload.php';
 
 // middleware method for login
