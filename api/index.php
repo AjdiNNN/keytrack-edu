@@ -5,8 +5,13 @@ error_reporting(E_ALL);
 
 require_once __DIR__.'/../vendor/autoload.php';
 require_once __DIR__.'/services/SessionService.class.php';
+require_once __DIR__.'/services/MouseService.class.php';
+require_once __DIR__.'/services/KeyboardService.class.php';
+
 
 Flight::register('sessionService', 'SessionService');
+Flight::register('mouseService', 'MouseService');
+Flight::register('keyboardService', 'KeyboardService');
 
 Flight::map('error', function(Exception $ex){
   // Handle error
@@ -22,10 +27,18 @@ return urldecode($query_param);
 });
 
 Flight::route('/*', function(){
-  return TRUE; 
+  $headers = getallheaders();
+  if (@!$headers['Authorization'] || $headers['Authorization'] != Config::PASSCODE()){
+    Flight::json(["message" => "Wrong Passcode for this deployment"], 403);
+    return FALSE;
+  }else{
+    return TRUE;
+  }
 });
 
 require_once __DIR__.'/routes/SessionRoutes.php';
+require_once __DIR__.'/routes/KeyboardRoutes.php';
+require_once __DIR__.'/routes/MouseRoutes.php';
 Flight::start();
 
 ?>

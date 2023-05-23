@@ -22,6 +22,10 @@ class Config
     {
         return Config::get_env("DB_PORT", "3306");
     }
+    public static function PASSCODE()
+    {
+        return Config::get_env("PASSCODE", "PyhtonKey-edu!");
+    }
     public static function get_env($name, $default)
     {
         return isset($_ENV[$name]) && trim($_ENV[$name]) != '' ? $_ENV[$name] : $default;

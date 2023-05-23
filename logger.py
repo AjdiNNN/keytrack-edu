@@ -4,6 +4,20 @@ from datetime import datetime
 import psutil
 import platform
 import pygetwindow as gw
+import requests
+import os
+import asyncio
+import atexit
+
+session = {"sessionid": 0, "start": None, "end": None}
+
+def update():
+    print("a")
+    r = requests.put(URL+"/session/"+ session['sessionid'], json={"end": str(datetime.now())}, headers={"Authorization": passcode})
+atexit.register(update)
+
+URL = os.getenv('api', 'http://localhost/keytrack-edu/api')
+passcode = os.getenv('passcode', 'PyhtonKey-edu!')
 
 def is_vscode_running():
     if platform.system() == "Windows":
@@ -16,52 +30,53 @@ def is_vscode_running():
                 return True
     return False
 
-
 def on_press(key):
     if is_vscode_running():
         try:
             active_window = gw.getActiveWindow()
             if active_window is not None and "Visual Studio Code" in active_window.title:
                 try:
-                    print(f'{datetime.now()} alphanumeric key {key.char} pressed')
+                    code = int(''.join(f'{ord(c)}' for c in key.char))
+                    data = {"pressed": key.char if code > 32 else code, "pressedAt": str(datetime.now()), "special": False, "session_id": session['sessionid']}
+                    r = requests.post(URL+"/keyboard", json=data, headers={"Authorization": passcode})
                 except AttributeError:
-                    print(f'{datetime.now()} special key {key} pressed')
+                    data = {"pressed":  str(key), "pressedAt": str(datetime.now()), "special": True, "session_id": session['sessionid']}
+                    r = requests.post(URL+"/keyboard", json=data, headers={"Authorization": passcode})
         except gw.PyGetWindowException:
             pass
-
+    else:
+        r = requests.put(URL+"/session/"+ session['sessionid'], json={"end": str(datetime.now())}, headers={"Authorization": passcode})
+        asyncio.run(main())
 
 def on_click(x, y, button, pressed):
-     if is_vscode_running():
-        try:
-            active_window = gw.getActiveWindow()
-            if active_window is not None and "Visual Studio Code" in active_window.title:
-                    print('{0} at {1}  Button: {2}'.format('Pressed' if pressed else 'Released',(x, y), button))
-        except gw.PyGetWindowException:
-            pass
-
-def on_scroll(x, y, dx, dy):
     if is_vscode_running():
         try:
             active_window = gw.getActiveWindow()
-            if active_window is not None and "Visual Studio Code" in active_window.title:
-                print('Scrolled {0} at {1}'.format(
-                    'down' if dy < 0 else 'up',
-                    (x, y)))
+            if active_window is not None and "Visual Studio Code" in active_window.title and active_window.isMaximized:
+                    data = {"x": x,"y": y, "pressedAt": str(datetime.now()), "isRight": button is button.right, "released": pressed is False,"session_id": session['sessionid']}
+                    r = requests.post(URL+"/mouse", json=data, headers={"Authorization": passcode})
         except gw.PyGetWindowException:
             pass
+    else:
+        r = requests.put(URL+"/session/"+ session['sessionid'], json={"end": str(datetime.now())}, headers={"Authorization": passcode})
+        asyncio.run(main())
 
+async def main():
+    while is_vscode_running is False:
+        await asyncio.sleep(1)
+    r = requests.post(URL+"/session", json={"start": str(datetime.now()), "end": str(datetime.now())}, headers={"Authorization": passcode})
+    global session
+    session = {"sessionid": r.json()['id'], "start": r.json()['id'], "end": None}
 
-# ...or, in a non-blocking fashion:
-keyboard_listener = keyboard.Listener(
+    keyboard_listener = keyboard.Listener(
     on_press=on_press)
+    mouse_listener = mouse.Listener(
+    on_click=on_click)
+    keyboard_listener.start()
+    mouse_listener.start()
+    keyboard_listener.join()
+    mouse_listener.join()
 
-# ...or, in a non-blocking fashion:
-mouse_listener = mouse.Listener(
-    on_click=on_click,
-    on_scroll=on_scroll)
 
+asyncio.run(main())
 
-keyboard_listener.start()
-mouse_listener.start()
-keyboard_listener.join()
-mouse_listener.join()
