@@ -62,7 +62,7 @@ def on_click(x, y, button, pressed):
 async def main():
     while is_vscode_running is False:
         await asyncio.sleep(1)
-    requests.post(URL+"/session", json={"start": str(datetime.now()), "end": str(datetime.now())}, headers={"Authorization": passcode})
+    r = requests.post(URL+"/session", json={"start": str(datetime.now()), "end": str(datetime.now())}, headers={"Authorization": passcode})
     global session
     session = {"sessionid": r.json()['id'], "start": r.json()['id'], "end": None}
 
@@ -74,6 +74,7 @@ async def main():
     mouse_listener.start()
     keyboard_listener.join()
     mouse_listener.join()
+
 
 asyncio.run(main())
 
