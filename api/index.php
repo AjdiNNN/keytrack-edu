@@ -25,9 +25,6 @@ $query_param = $query_param ? $query_param : $default_value;
 return urldecode($query_param);
 });
 
-Flight::route('/*', function(){
-
-});
 
 require_once __DIR__.'/routes/SessionRoutes.php';
 require_once __DIR__.'/routes/KeyboardRoutes.php';
