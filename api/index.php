@@ -26,7 +26,6 @@ return urldecode($query_param);
 });
 
 Flight::route('/*', function(){
-  phpinfo();
   $headers = getallheaders();
   if (@!$headers['Authorization'] || $headers['Authorization'] != Config::PASSCODE()){
     Flight::json(["message" => "Wrong Passcode for this deployment"], 403);
