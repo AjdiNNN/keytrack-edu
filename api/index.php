@@ -3,13 +3,10 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-phpinfo();
-
 require_once __DIR__.'/../vendor/autoload.php';
 require_once __DIR__.'/services/SessionService.class.php';
 require_once __DIR__.'/services/MouseService.class.php';
 require_once __DIR__.'/services/KeyboardService.class.php';
-
 
 Flight::register('sessionService', 'SessionService');
 Flight::register('mouseService', 'MouseService');
@@ -29,6 +26,7 @@ return urldecode($query_param);
 });
 
 Flight::route('/*', function(){
+  phpinfo();
   $headers = getallheaders();
   if (@!$headers['Authorization'] || $headers['Authorization'] != Config::PASSCODE()){
     Flight::json(["message" => "Wrong Passcode for this deployment"], 403);
