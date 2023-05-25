@@ -33,7 +33,7 @@ Flight::route('/*', function()
     Flight::json(["message" => "Authorization is missing"], 403);
     return FALSE;
   }
-  if($headers['authorization'] != Config::PASSCODE()){
+  if($headers['authorization'] != Config::PASSWORD()){
     Flight::json(["message" => "Authorization key is wrong"], 403);
     return FALSE;
   }
