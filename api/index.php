@@ -27,7 +27,7 @@ return urldecode($query_param);
 
 Flight::route('/*', function(){
   $headers = getallheaders();
-  if (@!$headers['Authorization'] || $headers['Authorization'] != Config::PASSCODE()){
+  if ((@!$headers['Authorization'] && @!$headers['authorization']) || ($headers['Authorization'] != Config::PASSCODE() && $headers['authorization'] != Config::PASSCODE())){
     Flight::json($headers, 403);
     Flight::json(["message" => "Authorization is missing or its wrong one"], 403);
     return FALSE;
