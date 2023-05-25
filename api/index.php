@@ -25,15 +25,18 @@ $query_param = $query_param ? $query_param : $default_value;
 return urldecode($query_param);
 });
 
-Flight::route('/*', function(){
+Flight::route('/*', function()
+{
   $headers = getallheaders();
-  if ((@!$headers['Authorization'] && @!$headers['authorization']) || ($headers['Authorization'] != Config::PASSCODE() && $headers['authorization'] != Config::PASSCODE())){
-    Flight::json($headers, 403);
-    Flight::json(["message" => "Authorization is missing or its wrong one"], 403);
+  if (!array_key_exists('Authorization', $headers)){
+    Flight::json(["message" => "Authorization is missing"], 403);
     return FALSE;
-  }else{
-    return TRUE;
   }
+  if($headers['Authorization'] != Config::PASSCODE()){
+    Flight::json(["message" => "Authorization key is wrong"], 403);
+    return FALSE;
+  }
+  return TRUE;
 });
 
 require_once __DIR__.'/routes/SessionRoutes.php';
