@@ -24,7 +24,7 @@ class Config
     }
     public static function PASSCODE()
     {
-        return Config::get_env("PASSCODE", "PyhtonKey-edu!");
+        return Config::get_env("PASS", "PyhtonKey-edu!");
     }
     public static function get_env($name, $default)
     {
