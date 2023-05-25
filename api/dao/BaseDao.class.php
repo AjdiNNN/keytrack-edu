@@ -74,7 +74,7 @@ abstract class BaseDao {
       $query .= $name ."= :". $name. ", ";
     }
     $query = substr($query, 0, -2);
-    $query .= " WHERE ${id_column} = :id";
+    $query .= " WHERE {$id_column} = :id";
 
     $stmt= $this->conn->prepare($query);
     $entity['id'] = $id;
