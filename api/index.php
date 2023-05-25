@@ -28,11 +28,12 @@ return urldecode($query_param);
 Flight::route('/*', function()
 {
   $headers = getallheaders();
-  if (!array_key_exists('Authorization', $headers) && !array_key_exists('authorization', $headers)){
+  $headers = array_change_key_case($headers, CASE_LOWER);
+  if (!array_key_exists('authorization', $headers)){
     Flight::json(["message" => "Authorization is missing"], 403);
     return FALSE;
   }
-  if($headers['Authorization'] != Config::PASSCODE()){
+  if($headers['authorization'] != Config::PASSCODE()){
     Flight::json(["message" => "Authorization key is wrong"], 403);
     return FALSE;
   }
