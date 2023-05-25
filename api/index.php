@@ -25,6 +25,15 @@ $query_param = $query_param ? $query_param : $default_value;
 return urldecode($query_param);
 });
 
+Flight::route('/*', function(){
+  $headers = getallheaders();
+  if (@!$headers['Authorization'] || $headers['Authorization'] != Config::PASSCODE()){
+    Flight::json(["message" => "Authorization is missing or its wrong one"], 403);
+    return FALSE;
+  }else{
+    return TRUE;
+  }
+});
 
 require_once __DIR__.'/routes/SessionRoutes.php';
 require_once __DIR__.'/routes/KeyboardRoutes.php';

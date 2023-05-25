@@ -19,7 +19,6 @@ abstract class BaseDao {
     $password = Config::DB_PASSWORD();
     $schema = Config::DB_SCHEME();
     $port = Config::DB_PORT();
-    Flight::json(["entity" => "mysql:host=".$servername]);
     $this->conn = new PDO("mysql:host=$servername;dbname=$schema;port=$port", $username, $password);
     // set the PDO error mode to exception
     $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
