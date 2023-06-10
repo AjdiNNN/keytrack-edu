@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__.'/../vendor/autoload.php';
 Flight::before('start', function() {
   header('Access-Control-Allow-Origin: https://keytrack-edu-front.vercel.app');
   header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
@@ -7,7 +8,6 @@ Flight::before('start', function() {
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
-require_once __DIR__.'/../vendor/autoload.php';
 require_once __DIR__.'/services/SessionService.class.php';
 require_once __DIR__.'/services/MouseService.class.php';
 require_once __DIR__.'/services/KeyboardService.class.php';
