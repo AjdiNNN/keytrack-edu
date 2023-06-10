@@ -27,6 +27,17 @@ $query_param = $query_param ? $query_param : $default_value;
 return urldecode($query_param);
 });
 
+Flight::before('error', function () {
+  header('Access-Control-Allow-Origin', 'https://keytrack-edu-front.vercel.app');
+  header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+});
+
+Flight::map('error', function(Exception $ex){
+  // Handle error
+  Flight::json(['message' => $ex->getMessage()], 500);
+});
+
+
 Flight::route('/*', function(){
   //return TRUE;
   //perform JWT decode
