@@ -9,9 +9,10 @@ import subprocess
 import sys
 import customtkinter as ctk
 import webbrowser
+import os
 
 session = {"sessionid": 0, "start": None, "end": None}
-URL = 'http://localhost/keytrack-edu/api'
+URL = os.getenv('URL', default='http://localhost/keytrack-edu/rest/api/')
 jwt = None
 error = None
 def start_login():
@@ -25,7 +26,7 @@ def start_login():
         global error
         if error != None:
             error.destroy
-        r = requests.post(URL + "/login", json={"username": user_entry.get(), "password": user_pass.get()})
+        r = requests.post(URL + "login", json={"username": user_entry.get(), "password": user_pass.get()})
         if r:
             global jwt
             jwt = r.json()['token']
@@ -99,7 +100,7 @@ def main():
     main()
 
 def start_new_session():
-    r = requests.post(URL + "/session", json={"start": str(datetime.now()), "end": str(datetime.now())},
+    r = requests.post(URL + "session", json={"start": str(datetime.now()), "end": str(datetime.now())},
                       headers={"Authorization": jwt})
     global session
     session = {"sessionid": r.json()['id'], "start": r.json()['start'], "end": None}
@@ -133,10 +134,10 @@ def on_press(key):
             try:
                 code = int(''.join(f'{ord(c)}' for c in key.char))
                 data = {"pressed": key.char if code > 32 else code, "pressedAt": str(datetime.now()), "special": False, "session_id": session['sessionid']}
-                requests.post(URL+"/keyboard", json=data, headers={"Authorization": jwt})
+                requests.post(URL+"keyboard", json=data, headers={"Authorization": jwt})
             except AttributeError:
                 data = {"pressed":  str(key), "pressedAt": str(datetime.now()), "special": True, "session_id": session['sessionid']}
-                requests.post(URL+"/keyboard", json=data, headers={"Authorization": jwt})
+                requests.post(URL+"keyboard", json=data, headers={"Authorization": jwt})
             except TypeError:
                 pass
         elif not is_vsc_running():
@@ -152,7 +153,7 @@ def on_click(x, y, button, pressed):
         active_window = gw.getActiveWindow()
         if active_window is not None and "Visual Studio Code" in active_window.title and active_window.isMaximized:
             data = {"x": x,"y": y, "pressedAt": str(datetime.now()), "isRight": button is button.right, "released": pressed is False,"session_id": session['sessionid']}
-            requests.post(URL+"/mouse", json=data, headers={"Authorization": jwt})
+            requests.post(URL+"mouse", json=data, headers={"Authorization": jwt})
         elif not is_vsc_running():
             global keyboard_listener
             global mouse_listener
