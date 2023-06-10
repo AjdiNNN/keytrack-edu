@@ -1,7 +1,4 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -12,12 +9,15 @@ require_once __DIR__.'/services/MouseService.class.php';
 require_once __DIR__.'/services/KeyboardService.class.php';
 require_once __DIR__.'/dao/UserDao.class.php';
 
+Flight::before('start', function() {
+  header('Access-Control-Allow-Origin: https://keytrack-edu-front.vercel.app');
+  header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
+});
+
 Flight::register('userDao', 'UserDao');
 Flight::register('sessionService', 'SessionService');
 Flight::register('mouseService', 'MouseService');
 Flight::register('keyboardService', 'KeyboardService');
-
-
 
 /* utility function for reading query parameters from URL */
 Flight::map('query', function($name, $default_value = NULL){
@@ -27,10 +27,6 @@ $query_param = $query_param ? $query_param : $default_value;
 return urldecode($query_param);
 });
 
-Flight::before('start', function() {
-  header('Access-Control-Allow-Origin: https://keytrack-edu-front.vercel.app');
-  header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
-});
 
 Flight::map('error', function(Exception $ex){
   // Handle error
