@@ -3,21 +3,13 @@
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
-require_once __DIR__.'/../vendor/autoload.php';
-require_once __DIR__.'/services/SessionService.class.php';
-require_once __DIR__.'/services/MouseService.class.php';
-require_once __DIR__.'/services/KeyboardService.class.php';
-require_once __DIR__.'/dao/UserDao.class.php';
+
 
 Flight::before('start', function() {
   header('Access-Control-Allow-Origin: https://keytrack-edu-front.vercel.app');
   header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
 });
 
-Flight::register('userDao', 'UserDao');
-Flight::register('sessionService', 'SessionService');
-Flight::register('mouseService', 'MouseService');
-Flight::register('keyboardService', 'KeyboardService');
 
 /* utility function for reading query parameters from URL */
 Flight::map('query', function($name, $default_value = NULL){
@@ -56,10 +48,6 @@ Flight::route('/*', function(){
   }
 });
 
-require_once __DIR__.'/routes/SessionRoutes.php';
-require_once __DIR__.'/routes/KeyboardRoutes.php';
-require_once __DIR__.'/routes/MouseRoutes.php';
-require_once __DIR__.'/routes/UserRoutes.php';
 Flight::start();
 
 ?>
