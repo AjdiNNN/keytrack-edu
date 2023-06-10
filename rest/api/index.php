@@ -36,7 +36,7 @@ Flight::map('query', function($name, $default_value = NULL){
 Flight::route('/*', function(){
     $path = Flight::request()->url;
     if ($path == '/login' || $path == '/register') return TRUE; // Exclude login route from middleware
-
+    Flight::response()->header('Content-Type', 'application/json');
     $headers = getallheaders();
     if (@!$headers['Authorization']){
         Flight::json(["message" => "Authorization is missing"], 403);
