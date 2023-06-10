@@ -12,7 +12,7 @@ import webbrowser
 import os
 
 session = {"sessionid": 0, "start": None, "end": None}
-URL = os.getenv('URL', default='http://localhost/keytrack-edu/rest/api/')
+URL = 'http://localhost/keytrack-edu/rest/api/'
 jwt = None
 error = None
 def start_login():
