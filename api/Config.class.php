@@ -22,9 +22,9 @@ class Config
     {
         return Config::get_env("DB_PORT", "3306");
     }
-    public static function PASSWORD()
+    public static function JWT_SECRET()
     {
-        return Config::get_env("PASSWORD", "PyhtonKey-edu!");
+        return Config::get_env("JWT-SECRET", "dc813309ba2546eff071cc496d0792aa01536c96cd1c0c7984b779bce030ea00");
     }
     public static function get_env($name, $default)
     {

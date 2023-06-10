@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>Auctions.ba</title>
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet">
+  <link href="css/index.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Source+Serif+Pro:400,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="fonts/icomoon/style.css">
+</head>
+
+<body class="bg-primary">
+  <header>
+    
+    <nav class="navbar navbar-expand-lg navbar-secondary bg-light">
+      <!-- Container wrapper -->
+      <div class="container">
+        <!-- Navbar brand -->
+        <a class="navbar-brand me-2" href="#">
+          <img
+            src="img/logo.png"
+            height="75"
+            alt="Logo"
+            loading="lazy"
+          />
+        </a>
+    
+          <!-- Left links -->
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item px-2">
+              <a class="nav-link text-dark" href="#"> <span class="icon-bank"></span>  Dashboard</a>
+            </li>
+            <li class="nav-item px-2">
+              <a class="nav-link text-dark" href="items.html"><span class="icon-navicon"></span>  My items</a>
+            </li>
+          </ul>
+          <!-- Left links -->
+    
+          <div class="d-flex align-items-center">
+            <a class="nav-link text-dark" href="#" onclick="userService.logout()">
+              <span class="icon-undo2"></span>
+              LOGOUT
+            </a>
+          </div>
+      </div>
+      <!-- Container wrapper -->
+    </nav>
+  </header>
+
+  <main>
+    <div class="text-center mt-5 text-light">
+      <div class="container marketing" style="margin-top:50px;">
+        <div id="item-list" class="row">
+          <div class="spinner-border" role="status">
+            <span class="sr-only"></span>
+          </div>
+        </div><!-- /.row -->
+      </div>
+    </div>
+  </main>
+</body>
+<script src="js/jquery-3.6.0.min.js"></script>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="js/jquery.validate.min.js"></script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+<script src="js/user-service.js"></script>
+
+
+
+<script>
+  var token = localStorage.getItem("token");
+  if (token){
+    MainService.init();
+  }else{
+    window.location.replace("login.html");
+  }
+</script>
+
+</html>

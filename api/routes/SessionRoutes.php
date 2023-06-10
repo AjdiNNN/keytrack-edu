@@ -2,6 +2,7 @@
 
 Flight::route('POST /session', function(){
     $data = Flight::request()->data->getData();
+    $data['user_id'] = Flight::get('user')['id'];
     Flight::json(Flight::sessionService()->add($data));
 });
 

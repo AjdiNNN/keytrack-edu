@@ -7,10 +7,77 @@ import requests
 import time
 import subprocess
 import sys
+import customtkinter as ctk
+import webbrowser
+
 session = {"sessionid": 0, "start": None, "end": None}
 URL = 'http://localhost/keytrack-edu/api'
-passcode = 'PyhtonKey-edu!'
+jwt = None
+error = None
+def start_login():
+    ctk.set_appearance_mode("dark")
+    ctk.set_default_color_theme("blue")
+    app = ctk.CTk()
+    app.geometry("400x450")
+    app.title("KeyTrack-Edu")
 
+    def login():
+        global error
+        if error != None:
+            error.destroy
+        r = requests.post(URL + "/login", json={"username": user_entry.get(), "password": user_pass.get()})
+        if r:
+            global jwt
+            jwt = r.json()['token']
+            f = open("jwt.txt", "a")
+            f.write(jwt)
+            f.close()
+            error = ctk.CTkLabel(master=frame,text='Logged in!', text_color=("green"))
+            error.pack(pady=5,padx=5)
+            app.after(3000,app.destroy)
+        else:
+            error = ctk.CTkLabel(master=frame,text=r.json()['message'], text_color=("red"))
+            error.pack(pady=5,padx=5)
+            error.after(3000, error.destroy)
+            return
+    
+    
+    label = ctk.CTkLabel(app,text="Welcome!")
+    
+    label.pack(pady=20)
+    
+    
+    frame = ctk.CTkFrame(master=app)
+    frame.pack(pady=20,padx=40,fill='both',expand=True)
+    
+    label = ctk.CTkLabel(master=frame,text='Please sign in')
+    label.pack(pady=12,padx=10)
+    
+    
+    user_entry= ctk.CTkEntry(master=frame,placeholder_text="Username")
+    user_entry.pack(pady=12,padx=10)
+    
+    user_pass= ctk.CTkEntry(master=frame,placeholder_text="Password",show="*")
+    user_pass.pack(pady=12,padx=10)
+
+    
+    button = ctk.CTkButton(master=frame,text='Login',command=login)
+    button.pack(pady=12,padx=10)
+    
+
+    link1 = ctk.CTkLabel(master=frame, text="No account?")
+    link1.pack(pady=12,padx=10)
+    link1.bind("<Button-1>", lambda e: webbrowser.open_new("http://www.google.com"))
+    app.mainloop()
+
+try:
+    f = open("jwt.txt", "r")
+    jwt = f.read()
+    r = requests.get(URL, headers={"Authorization": jwt})
+    if r.status_code==402:
+        start_login()
+except IOError:
+    start_login()
 
 keyboard_listener = None
 mouse_listener = None
@@ -33,9 +100,9 @@ def main():
 
 def start_new_session():
     r = requests.post(URL + "/session", json={"start": str(datetime.now()), "end": str(datetime.now())},
-                      headers={"Authorization": passcode})
+                      headers={"Authorization": jwt})
     global session
-    session = {"sessionid": r.json()['id'], "start": r.json()['id'], "end": None}
+    session = {"sessionid": r.json()['id'], "start": r.json()['start'], "end": None}
 
 def is_process_running(process_name):
     command = ""
@@ -53,7 +120,7 @@ def is_process_running(process_name):
         return False
 
 def is_vsc_running():
-    vsc_process_names = ["chrome", "chrome.exe"]
+    vsc_process_names = ["code", "code.exe"]
     for process_name in vsc_process_names:
         if is_process_running(process_name):
             return True
@@ -62,14 +129,14 @@ def is_vsc_running():
 def on_press(key):
     try:
         active_window = gw.getActiveWindow()
-        if active_window is not None and "Google Chrome" in active_window.title:
+        if active_window is not None and "Visual Studio Code" in active_window.title:
             try:
                 code = int(''.join(f'{ord(c)}' for c in key.char))
                 data = {"pressed": key.char if code > 32 else code, "pressedAt": str(datetime.now()), "special": False, "session_id": session['sessionid']}
-                requests.post(URL+"/keyboard", json=data, headers={"Authorization": passcode})
+                requests.post(URL+"/keyboard", json=data, headers={"Authorization": jwt})
             except AttributeError:
                 data = {"pressed":  str(key), "pressedAt": str(datetime.now()), "special": True, "session_id": session['sessionid']}
-                requests.post(URL+"/keyboard", json=data, headers={"Authorization": passcode})
+                requests.post(URL+"/keyboard", json=data, headers={"Authorization": jwt})
             except TypeError:
                 pass
         elif not is_vsc_running():
@@ -83,9 +150,9 @@ def on_press(key):
 def on_click(x, y, button, pressed):
     try:
         active_window = gw.getActiveWindow()
-        if active_window is not None and "Google Chrome" in active_window.title and active_window.isMaximized:
+        if active_window is not None and "Visual Studio Code" in active_window.title and active_window.isMaximized:
             data = {"x": x,"y": y, "pressedAt": str(datetime.now()), "isRight": button is button.right, "released": pressed is False,"session_id": session['sessionid']}
-            requests.post(URL+"/mouse", json=data, headers={"Authorization": passcode})
+            requests.post(URL+"/mouse", json=data, headers={"Authorization": jwt})
         elif not is_vsc_running():
             global keyboard_listener
             global mouse_listener
