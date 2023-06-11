@@ -75,6 +75,11 @@ let userService = {
       contentType: "application/json",
       dataType: "json",
       success: function(result) {
+        if(result.message)
+        {
+          toastr.error(result.message);
+          return;
+        }
         localStorage.setItem("token", result.token);
         window.location.replace("index.html");
       },
@@ -92,6 +97,11 @@ let userService = {
         contentType: "application/json",
         dataType: "json",
         success: function(result) {
+            if(result.message)
+            {
+              toastr.error(result.message);
+              return;
+            }
             toastr.success("Registered! Please login in");
             $("#register").modal("hide");
         },
