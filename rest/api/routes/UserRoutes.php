@@ -9,12 +9,12 @@ Flight::route('POST /login', function(){
       if(password_verify($login['password'],$user['password'])){
         unset($user['password']);
         $jwt = JWT::encode($user, Config::JWT_SECRET(), 'HS256');
-        Flight::json(['token' => $jwt]);
+        Flight::halt(['token' => $jwt]);
       }else{
-        Flight::json(["message" => "Wrong password"], 404);
+        Flight::halt(404, ["message" => "Wrong password"]);
       }
     }else{
-      Flight::json(["message" => "User doesn't exist"], 405);
+      Flight::halt(405, ["message" => "User doesn't exist"]);
     }
 });
 
@@ -22,17 +22,17 @@ Flight::route('POST /register', function(){
   $data = Flight::request()->data->getData();
   if(Flight::userDao()->get_user_by_username($data['username']))
   {
-    Flight::json(["message" => "Username already registered"], 500);
+    Flight::halt(["message" => "Username already registered"], 500);
   }
   else if(Flight::userDao()->get_user_by_email($data['email']))
   {
-    Flight::json(["message" => "Email already registered"], 500);
+    Flight::halt(["message" => "Email already registered"], 500);
   }
   else{
     $data['email']  = strtolower($data['email']);
     $data['password'] = password_hash($data['password'], PASSWORD_ARGON2I);
     Flight::userDao()->add($data);
-    Flight::json(["message"=>"registered"]);
+    Flight::halt(["message"=>"registered"]);
   }
 });
 

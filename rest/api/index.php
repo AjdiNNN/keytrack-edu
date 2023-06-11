@@ -39,7 +39,7 @@ Flight::route('/*', function(){
     Flight::response()->header('Content-Type', 'application/json');
     $headers = getallheaders();
     if (@!$headers['Authorization']){
-        Flight::json(["message" => "Authorization is missing"], 403);
+        Flight::halt(["message" => "Authorization is missing"], 403);
         return FALSE;
     } else {
         try {
@@ -47,7 +47,7 @@ Flight::route('/*', function(){
             Flight::set('user', $decoded);
             return TRUE;
         } catch (\Exception $e) {
-            Flight::json(["message" => "Authorization token is not valid"], 402);
+            Flight::halt(["message" => "Authorization token is not valid"], 402);
             return FALSE;
         }
     }

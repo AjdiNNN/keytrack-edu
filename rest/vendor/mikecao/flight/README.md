@@ -817,14 +817,14 @@ Flight provides support for sending JSON and JSONP responses. To send a JSON res
 pass some data to be JSON encoded:
 
 ```php
-Flight::json(array('id' => 123));
+Flight::halt(array('id' => 123));
 ```
 
 For JSONP requests you, can optionally pass in the query parameter name you are
 using to define your callback function:
 
 ```php
-Flight::jsonp(array('id' => 123), 'q');
+Flight::haltp(array('id' => 123), 'q');
 ```
 
 So, when making a GET request using `?q=my_func`, you should receive the output:
@@ -890,8 +890,8 @@ Flight::error($exception) // Sends an HTTP 500 response.
 Flight::notFound() // Sends an HTTP 404 response.
 Flight::etag($id, [$type]) // Performs ETag HTTP caching.
 Flight::lastModified($time) // Performs last modified HTTP caching.
-Flight::json($data, [$code], [$encode], [$charset], [$option]) // Sends a JSON response.
-Flight::jsonp($data, [$param], [$code], [$encode], [$charset], [$option]) // Sends a JSONP response.
+Flight::halt($data, [$code], [$encode], [$charset], [$option]) // Sends a JSON response.
+Flight::haltp($data, [$param], [$code], [$encode], [$charset], [$option]) // Sends a JSONP response.
 ```
 
 Any custom methods added with `map` and `register` can also be filtered.
