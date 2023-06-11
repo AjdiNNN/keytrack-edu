@@ -18,6 +18,11 @@ Flight::register('mouseService', 'MouseService');
 Flight::register('keyboardService', 'KeyboardService');
 
 
+// Set error handling
+Flight::map('error', function(Exception $ex){
+    // Handle error
+    Flight::json(['message' => $ex->getMessage()], 500);
+});
 
 // Utility function for reading query parameters from URL
 Flight::map('query', function($name, $default_value = NULL){
@@ -31,10 +36,10 @@ Flight::map('query', function($name, $default_value = NULL){
 Flight::route('/*', function(){
     $path = Flight::request()->url;
     if ($path == '/login' || $path == '/register') return TRUE; // Exclude login route from middleware
-    Flight::response()->header('Content-Type', 'application/json');
+
     $headers = getallheaders();
     if (@!$headers['Authorization']){
-        Flight::halt(["message" => "Authorization is missing"], 403);
+        Flight::json(["message" => "Authorization is missing"], 403);
         return FALSE;
     } else {
         try {
@@ -42,7 +47,7 @@ Flight::route('/*', function(){
             Flight::set('user', $decoded);
             return TRUE;
         } catch (\Exception $e) {
-            Flight::halt(["message" => "Authorization token is not valid"], 402);
+            Flight::json(["message" => "Authorization token is not valid"], 402);
             return FALSE;
         }
     }
