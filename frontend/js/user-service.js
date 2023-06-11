@@ -1,5 +1,5 @@
 
-let url = 'https://keytrack-edu-rest.vercel.app/';
+let url = 'http://54.37.17.73/';
 let userService = {
   init: function(){
     

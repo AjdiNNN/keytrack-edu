@@ -12,7 +12,7 @@ import webbrowser
 import os
 
 session = {"sessionid": 0, "start": None, "end": None}
-URL = 'https://keytrack-edu-rest.vercel.app/'
+URL = 'http://localhost/keytrack-edu/rest/api/'
 jwt = None
 error = None
 def start_login():
@@ -27,11 +27,7 @@ def start_login():
         if error != None:
             error.destroy
         r = requests.post(URL + "login", json={"username": user_entry.get(), "password": user_pass.get()})
-        if 'message' in r.json():
-            error = ctk.CTkLabel(master=frame,text=r.json()['message'], text_color=("red"))
-            error.pack(pady=5,padx=5)
-            error.after(3000, error.destroy)
-        else:
+        if r:
             global jwt
             jwt = r.json()['token']
             f = open("jwt.txt", "a")
@@ -40,7 +36,11 @@ def start_login():
             error = ctk.CTkLabel(master=frame,text='Logged in!', text_color=("green"))
             error.pack(pady=5,padx=5)
             app.after(3000,app.destroy)
-        return
+        else:
+            error = ctk.CTkLabel(master=frame,text=r.json()['message'], text_color=("red"))
+            error.pack(pady=5,padx=5)
+            error.after(3000, error.destroy)
+            return
     
     
     label = ctk.CTkLabel(app,text="Welcome!")
@@ -68,14 +68,14 @@ def start_login():
 
     link1 = ctk.CTkLabel(master=frame, text="No account?")
     link1.pack(pady=12,padx=10)
-    link1.bind("<Button-1>", lambda e: webbrowser.open_new("https://keytrack-edu-front.vercel.app/login.html"))
+    link1.bind("<Button-1>", lambda e: webbrowser.open_new("http://www.google.com"))
     app.mainloop()
 
 try:
     f = open("jwt.txt", "r")
     jwt = f.read()
     r = requests.get(URL, headers={"Authorization": jwt})
-    if 'message' in r.json():
+    if r.status_code==402:
         start_login()
 except IOError:
     start_login()
@@ -85,7 +85,7 @@ mouse_listener = None
 
 def main():
     global keyboard_listener
-    global mouse_listene
+    global mouse_listener
     while not is_vsc_running():
         time.sleep(15)
     start_new_session()
@@ -102,7 +102,6 @@ def main():
 def start_new_session():
     r = requests.post(URL + "session", json={"start": str(datetime.now()), "end": str(datetime.now())},
                       headers={"Authorization": jwt})
-    print(r.json())
     global session
     session = {"sessionid": r.json()['id'], "start": r.json()['start'], "end": None}
 

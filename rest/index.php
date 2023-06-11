@@ -6,7 +6,7 @@ error_reporting(E_ALL);
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
-require_once __DIR__.'/../vendor/autoload.php';
+require_once __DIR__.'/vendor/autoload.php';
 require_once __DIR__.'/services/SessionService.class.php';
 require_once __DIR__.'/services/MouseService.class.php';
 require_once __DIR__.'/services/KeyboardService.class.php';
@@ -53,6 +53,21 @@ Flight::route('/*', function(){
     }
 });
 
+Flight::route('POST /login', function(){
+    $login = Flight::request()->data->getData();
+    $user = Flight::userDao()->get_user_by_username($login['username']);
+    if (isset($user['id'])){
+      if(password_verify($login['password'],$user['password'])){
+        unset($user['password']);
+        $jwt = JWT::encode($user, Config::JWT_SECRET(), 'HS256');
+        Flight::json(['token' => $jwt]);
+      }else{
+        Flight::json(["message" => "Wrong password"], 404);
+      }
+    }else{
+      Flight::json(["message" => "User doesn't exist"], 405);
+    }
+});
 // Include route files
 require_once __DIR__.'/routes/SessionRoutes.php';
 require_once __DIR__.'/routes/KeyboardRoutes.php';
