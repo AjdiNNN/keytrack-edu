@@ -12,7 +12,7 @@ import webbrowser
 import os
 
 session = {"sessionid": 0, "start": None, "end": None}
-URL = 'http://localhost/keytrack-edu/rest/api/'
+URL = 'https://keytrack-edu-rest.vercel.app/'
 jwt = None
 error = None
 def start_login():
@@ -27,7 +27,11 @@ def start_login():
         if error != None:
             error.destroy
         r = requests.post(URL + "login", json={"username": user_entry.get(), "password": user_pass.get()})
-        if r:
+        if 'message' in r.json():
+            error = ctk.CTkLabel(master=frame,text=r.json()['message'], text_color=("red"))
+            error.pack(pady=5,padx=5)
+            error.after(3000, error.destroy)
+        else:
             global jwt
             jwt = r.json()['token']
             f = open("jwt.txt", "a")
@@ -36,11 +40,7 @@ def start_login():
             error = ctk.CTkLabel(master=frame,text='Logged in!', text_color=("green"))
             error.pack(pady=5,padx=5)
             app.after(3000,app.destroy)
-        else:
-            error = ctk.CTkLabel(master=frame,text=r.json()['message'], text_color=("red"))
-            error.pack(pady=5,padx=5)
-            error.after(3000, error.destroy)
-            return
+        return
     
     
     label = ctk.CTkLabel(app,text="Welcome!")
