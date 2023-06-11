@@ -68,14 +68,14 @@ def start_login():
 
     link1 = ctk.CTkLabel(master=frame, text="No account?")
     link1.pack(pady=12,padx=10)
-    link1.bind("<Button-1>", lambda e: webbrowser.open_new("http://www.google.com"))
+    link1.bind("<Button-1>", lambda e: webbrowser.open_new("https://keytrack-edu-front.vercel.app/login.html"))
     app.mainloop()
 
 try:
     f = open("jwt.txt", "r")
     jwt = f.read()
     r = requests.get(URL, headers={"Authorization": jwt})
-    if r.status_code==402:
+    if 'message' in r.json():
         start_login()
 except IOError:
     start_login()
@@ -102,6 +102,7 @@ def main():
 def start_new_session():
     r = requests.post(URL + "session", json={"start": str(datetime.now()), "end": str(datetime.now())},
                       headers={"Authorization": jwt})
+    print(r.json())
     global session
     session = {"sessionid": r.json()['id'], "start": r.json()['start'], "end": None}
 
