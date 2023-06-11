@@ -11,10 +11,10 @@ Flight::route('POST /login', function(){
         $jwt = JWT::encode($user, Config::JWT_SECRET(), 'HS256');
         Flight::halt(['token' => $jwt]);
       }else{
-        Flight::halt(404, ["message" => "Wrong password"]);
+        Flight::halt(404, "Wrong password");
       }
     }else{
-      Flight::halt(405, ["message" => "User doesn't exist"]);
+      Flight::halt(405, "User doesn't exist");
     }
 });
 

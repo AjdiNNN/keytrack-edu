@@ -18,12 +18,7 @@ Flight::register('mouseService', 'MouseService');
 Flight::register('keyboardService', 'KeyboardService');
 
 
-Flight::map('error', function(Exception $ex){
-  $message = $ex->getMessage();
-  $code = $ex->getCode();
 
-  Flight::halt($code, json_encode(['message' => $message]));
-});
 // Utility function for reading query parameters from URL
 Flight::map('query', function($name, $default_value = NULL){
     $request = Flight::request();
