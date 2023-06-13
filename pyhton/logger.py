@@ -1,5 +1,4 @@
 from pynput import keyboard
-from pynput.keyboard import Key
 from pynput import mouse
 from datetime import datetime
 import pygetwindow as gw
@@ -9,10 +8,10 @@ import subprocess
 import sys
 import customtkinter as ctk
 import webbrowser
-import os
+import sys
 
 session = {"sessionid": 0, "start": None, "end": None}
-URL = 'http://localhost/keytrack-edu/rest/api/'
+URL = 'https://keytrackedu.com/rest/'
 jwt = None
 error = None
 def start_login():
@@ -68,14 +67,18 @@ def start_login():
 
     link1 = ctk.CTkLabel(master=frame, text="No account?")
     link1.pack(pady=12,padx=10)
-    link1.bind("<Button-1>", lambda e: webbrowser.open_new("http://www.google.com"))
+    link1.bind("<Button-1>", lambda e: webbrowser.open_new("https://keytrackedu.com/"))
+    def on_closing():
+        sys.exit()
+
+    app.protocol("WM_DELETE_WINDOW", on_closing)
     app.mainloop()
 
 try:
     f = open("jwt.txt", "r")
     jwt = f.read()
     r = requests.get(URL, headers={"Authorization": jwt})
-    if r.status_code==402:
+    if r.status_code==402 or r.status_code==403:
         start_login()
 except IOError:
     start_login()
@@ -127,17 +130,18 @@ def is_vsc_running():
             return True
     return False
 
+s = requests.Session()
 def on_press(key):
     try:
         active_window = gw.getActiveWindow()
         if active_window is not None and "Visual Studio Code" in active_window.title:
             try:
                 code = int(''.join(f'{ord(c)}' for c in key.char))
-                data = {"pressed": key.char if code > 32 else code, "pressedAt": str(datetime.now()), "special": False, "session_id": session['sessionid']}
-                requests.post(URL+"keyboard", json=data, headers={"Authorization": jwt})
+                data = {"pressed": key.char if code > 32 else code, "pressedAt": str(datetime.now()), "special": int(False), "session_id": session['sessionid']}
+                s.post(URL+"keyboard", json=data, headers={"Authorization": jwt})
             except AttributeError:
-                data = {"pressed":  str(key), "pressedAt": str(datetime.now()), "special": True, "session_id": session['sessionid']}
-                requests.post(URL+"keyboard", json=data, headers={"Authorization": jwt})
+                data = {"pressed":  str(key), "pressedAt": str(datetime.now()), "special": int(True), "session_id": session['sessionid']}
+                s.post(URL+"keyboard", json=data, headers={"Authorization": jwt})
             except TypeError:
                 pass
         elif not is_vsc_running():
@@ -152,8 +156,8 @@ def on_click(x, y, button, pressed):
     try:
         active_window = gw.getActiveWindow()
         if active_window is not None and "Visual Studio Code" in active_window.title and active_window.isMaximized:
-            data = {"x": x,"y": y, "pressedAt": str(datetime.now()), "isRight": button is button.right, "released": pressed is False,"session_id": session['sessionid']}
-            requests.post(URL+"mouse", json=data, headers={"Authorization": jwt})
+            data = {"x": x,"y": y, "pressedAt": str(datetime.now()), "isRight": int(button is button.right), "released": int(pressed is False),"session_id": session['sessionid']}
+            s.post(URL+"mouse", json=data, headers={"Authorization": jwt})
         elif not is_vsc_running():
             global keyboard_listener
             global mouse_listener
