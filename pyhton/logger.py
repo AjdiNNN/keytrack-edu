@@ -9,12 +9,15 @@ import sys
 import customtkinter as ctk
 import webbrowser
 import sys
+from threading import Thread
+import queue
+
 
 session = {"sessionid": 0, "start": None, "end": None}
 URL = 'https://keytrackedu.com/rest/'
 jwt = None
 error = None
-s = None
+
 def start_login():
     ctk.set_appearance_mode("dark")
     ctk.set_default_color_theme("blue")
@@ -86,21 +89,7 @@ except IOError:
 
 keyboard_listener = None
 mouse_listener = None
-
-def main():
-    global keyboard_listener
-    global mouse_listener
-    while not is_vsc_running():
-        time.sleep(60)
-    start_new_session()
-    keyboard_listener = keyboard.Listener(on_press=on_press)
-    mouse_listener = mouse.Listener(on_click=on_click)
-    keyboard_listener.start()
-    mouse_listener.start()
-    check_if_stopped()
-    keyboard_listener.join()
-    mouse_listener.join()
-    main()
+    
 def check_if_stopped():
     global keyboard_listener
     global mouse_listener
@@ -114,8 +103,6 @@ def start_new_session():
                       headers={"Authorization": jwt})
     global session
     session = {"sessionid": r.json()['id'], "start": r.json()['start'], "end": None}
-    global s
-    s = requests.Session()
 
 def is_process_running(process_name):
     command = ""
@@ -148,10 +135,10 @@ def on_press(key):
                 if key.char:
                     code = int(''.join(f'{ord(c)}' for c in key.char))
                     data = {"pressed": key.char if code > 32 else code, "pressedAt": str(datetime.now()), "special": int(False), "session_id": session['sessionid']}
-                    s.post(URL+"keyboard", json=data, headers={"Authorization": jwt})
+                    send_post_request(URL + "keyboard", data)
             except AttributeError:
-                data = {"pressed":  str(key), "pressedAt": str(datetime.now()), "special": int(True), "session_id": session['sessionid']}
-                s.post(URL+"keyboard", json=data, headers={"Authorization": jwt})
+                data = {"pressed": str(key), "pressedAt": str(datetime.now()), "special": int(True), "session_id": session['sessionid']}
+                send_post_request(URL + "keyboard", data)
             except TypeError:
                 pass
     except gw.PyGetWindowException:
@@ -161,8 +148,43 @@ def on_click(x, y, button, pressed):
     try:
         active_window = gw.getActiveWindow()
         if active_window is not None and "Visual Studio Code" in active_window.title and active_window.isMaximized:
-            data = {"x": x,"y": y, "pressedAt": str(datetime.now()), "isRight": int(button is button.right), "released": int(pressed is False),"session_id": session['sessionid']}
-            s.post(URL+"mouse", json=data, headers={"Authorization": jwt})
+            data = {"x": x, "y": y, "pressedAt": str(datetime.now()), "isRight": int(button is button.right), "released": int(pressed is False),"session_id": session['sessionid']}
+            send_post_request(URL + "mouse", data)
     except gw.PyGetWindowException:
         pass
+
+def send_post_request(url, data):
+    request_queue.put((url, data))
+
+def handle_requests():
+    while True:
+        url, data = request_queue.get()
+        try:
+            r = requests.post(url, json=data, headers={"Authorization": jwt})
+            if r.status_code != 200:
+                print(f"Error sending request: {r.status_code}")
+                print(r.text)
+        except requests.exceptions.RequestException as e:
+            print(f"Error sending requestt: {e}")
+        request_queue.task_done()
+
+request_queue = queue.Queue()
+thread = Thread(target=handle_requests)
+thread.start()
+
+def main():
+    global keyboard_listener
+    global mouse_listener
+    while not is_vsc_running():
+        time.sleep(60)
+    start_new_session()
+    keyboard_listener = keyboard.Listener(on_press=on_press)
+    mouse_listener = mouse.Listener(on_click=on_click)
+    keyboard_listener.start()
+    mouse_listener.start()
+    check_if_stopped()
+    keyboard_listener.join()
+    mouse_listener.join()
+    main()
 main()
+thread.join()
