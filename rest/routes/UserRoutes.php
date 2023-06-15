@@ -35,5 +35,22 @@ Flight::route('POST /register', function(){
     Flight::json(["message"=>"registered"]);
   }
 });
-
+Flight::route('GET /totalsessions', function(){
+  Flight::json(["data" =>  Flight::userDao()->get_total_sessions(Flight::get('user')['id'])]);
+});
+Flight::route('GET /averagesessions', function(){
+  Flight::json(["data" =>  Flight::userDao()->get_average_session(Flight::get('user')['id'])]);
+});
+Flight::route('GET /totalkeyboard', function(){
+  Flight::json(["data" =>  Flight::userDao()->get_total_keyboard(Flight::get('user')['id'])]);
+});
+Flight::route('GET /totalmouse', function(){
+  Flight::json(["data" =>  Flight::userDao()->get_total_mouse(Flight::get('user')['id'])]);
+});
+Flight::route('GET /newlines', function(){
+  Flight::json(["data" =>  Flight::userDao()->get_total_new_lines(Flight::get('user')['id'])]);
+});
+Flight::route('GET /mostfrequent', function(){
+  Flight::json(["data" =>  Flight::userDao()->get_most_frequenet_button(Flight::get('user')['id'])]);
+});
 ?>

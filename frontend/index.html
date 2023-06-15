@@ -52,14 +52,58 @@
   </header>
 
   <main>
-    <div class="text-center mt-5 text-light">
-      <div class="container marketing" style="margin-top:50px;">
+    
+    <div class="text-center py-5 text-light" style="background-color: #2323 !important;">
+      <h1>Welcome! This is your stats for Visual Studio Code!</h1>
+      <div class="container marketing" >
         <div id="item-list" class="row">
+          <div class="item">
+            <div class="item-content">
+              <h2 class="item-title">Total Sessions</h2>
+              <p class="item-description">Number of times you started Visual Studio Code.</p>
+              <div id="sessionsnumber"><p class="item-metric"></p><div class="spinner-border" role="status"><span class="sr-only"></span></div></div>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-content">
+              <h2 class="item-title">Average Session</h2>
+              <p class="item-description">Average time spent in sessions.</p>
+              <div id="sessionsaverage"><p class="item-metric"></p><div class="spinner-border" role="status"><span class="sr-only"></span></div></div>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-content">
+              <h2 class="item-title">Keyboard press</h2>
+              <p class="item-description">Number of times you pressed keyboard button.</p>
+              <div id="keyboardtotal"><p class="item-metric"></p><div class="spinner-border" role="status"><span class="sr-only"></span></div></div>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-content">
+              <h2 class="item-title">Keyboard press</h2>
+              <p class="item-description">Number of times you pressed mouse button.</p>
+              <div id="mousetotal"><p class="item-metric"></p><div class="spinner-border" role="status"><span class="sr-only"></span></div></div>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-content">
+              <h2 class="item-title">New lines</h2>
+              <p class="item-description">Number of times you made a new line.</p>
+              <div id="newline"><p class="item-metric"></p><div class="spinner-border" role="status"><span class="sr-only"></span></div></div>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-content">
+              <h2 class="item-title">Most frequent</h2>
+              <p class="item-description">Keyboard button you preseed the most.</p>
+              <div id="keyboardbutton"><p class="item-metric"></p><div class="spinner-border" role="status"><span class="sr-only"></span></div></div>
+            </div>
+          </div>
          <!-- /.row<div class="spinner-border" role="status">
             <span class="sr-only"></span>
           </div>
         </div> --> <!-- /.row -->
-        <h1>Welcome! More content comming soon!</h1>
+        
       </div>
     </div>
   </main>
@@ -70,13 +114,13 @@
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 <script src="js/user-service.js"></script>
-
+<script src="js/main-service.js"></script>
 
 
 <script>
   var token = localStorage.getItem("token");
   if (token){
-    MainService.init();
+    mainService.init();
   }else{
     window.location.replace("login.html");
   }
