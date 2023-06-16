@@ -63,6 +63,9 @@ Flight::route('GET /timebetweenpress', function(){
   Flight::json(Flight::userDao()->get_average_time_between_press(Flight::get('user')['id']));
 });
 Flight::route('GET /session/@id', function($id){
+  $actualOwner = Flight::userDao()->get_session_owner($id);
+  if($actualOwner['user_id'] != Flight::get('user')['id'])
+    return;
   $mouseData = Flight::userDao()->get_mouse_from_session($id);
   $keyboardData = Flight::userDao()->get_keyboard_from_session($id);
   Flight::json(["mouse" => $mouseData, "keyboard" => $keyboardData]);
@@ -78,5 +81,8 @@ Flight::route('GET /latestend', function(){
 });
 Flight::route('GET /mostunique', function(){
   Flight::json(Flight::userDao()->get_unique_session(Flight::get('user')['id']));
+});
+Flight::route('GET /usersessions', function(){
+  Flight::json(Flight::userDao()->get_sessions(Flight::get('user')['id']));
 });
 ?>

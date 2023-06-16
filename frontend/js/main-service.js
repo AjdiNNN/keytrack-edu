@@ -136,7 +136,6 @@ let mainService = {
         xhr.setRequestHeader('Authorization', localStorage.getItem('token'))
       },
       success: function (result) {
-        console.log(result);
         $('#longestsession').html('<p class="item-metric">'+result.session_duration+'</p>');
         $('#longestsessionbutton').attr("onclick","mainService.load("+result.id+")");
       },
@@ -225,7 +224,37 @@ let mainService = {
       }
     });
   },
-
+  initsessions: function(){
+    $.ajax({
+      url: url+'usersessions',
+      type: 'GET',
+      beforeSend: function (xhr) {
+        xhr.setRequestHeader('Authorization', localStorage.getItem('token'))
+      },
+      success: function (data) {
+        $('#item-list').html();
+        let html = '';
+        for (let i = 0; i < data.length; i++) {
+          html += `
+          <div class="col-lg-6">
+          <div class="card mb-4">
+            <div class="card-body bg-dark">
+              <h5 class="card-title">Session ${i + 1}</h5>
+              <p class="card-text">Start Time: ${data[i].start}</p>
+              <p class="card-text">End Time: ${data[i].end}</p>
+              <button class="btn btn-primary btn-details" data-bs-toggle="modal" data-bs-target="#session" onclick="mainService.load(${data[i].id})">Details</button>
+            </div>
+          </div>
+        </div>`;
+        }
+        $('#item-list').html(html);
+      },
+      error: function (XMLHttpRequest, textStatus, errorThrown) {
+        toastr.error(XMLHttpRequest.responseJSON.message)
+        userService.logout()
+      }
+    });
+  },
   logout: function(){
     localStorage.clear();
     window.location.replace("login.html");

@@ -94,8 +94,16 @@ class UserDao extends BaseDao
   {
       return $this->query_unique("SELECT s.id AS session_id, COUNT(DISTINCT k.pressed) AS distinct_keys_pressed FROM sessions s INNER JOIN keyboard k ON k.session_id = s.id WHERE s.user_id = :id GROUP BY s.id ORDER BY distinct_keys_pressed DESC LIMIT 1;", ['id' => $id]);
   }
+  public function get_session_owner($id)
+  {
+      return $this->query_unique("SELECT user_id FROM sessions WHERE id = :id", ['id' => $id]);
+  }
+  public function get_sessions($id)
+  {
+      return $this->query("SELECT * FROM sessions WHERE user_id = :id;", ['id' => $id]);
+  }
 
-  
+
 }
 
 ?>
