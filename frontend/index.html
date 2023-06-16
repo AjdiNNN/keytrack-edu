@@ -16,7 +16,7 @@
 <body class="bg-primary">
   <header>
     
-    <nav class="navbar navbar-expand-lg navbar-secondary bg-light">
+    <nav class="navbar navbar-expand-lg navbar-secondary bg-dark">
       <!-- Container wrapper -->
       <div class="container">
         <!-- Navbar brand -->
@@ -32,16 +32,16 @@
           <!-- Left links -->
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item px-2">
-              <a class="nav-link text-dark" href="#"> <span class="icon-bank"></span>  Dashboard</a>
+              <a class="nav-link text-light" href="#"> <span class="icon-bank"></span>  Dashboard</a>
             </li>
             <li class="nav-item px-2">
-              <a class="nav-link text-dark" href="items.html"><span class="icon-navicon"></span>  My items</a>
+              <a class="nav-link text-light" href="items.html"><span class="icon-navicon"></span>  My items</a>
             </li>
           </ul>
           <!-- Left links -->
     
           <div class="d-flex align-items-center">
-            <a class="nav-link text-dark" href="#" onclick="userService.logout()">
+            <a class="nav-link text-light" href="#" onclick="userService.logout()">
               <span class="icon-undo2"></span>
               LOGOUT
             </a>
@@ -53,9 +53,9 @@
 
   <main>
     
-    <div class="text-center py-5 text-light" style="background-color: #2323 !important;">
+    <div class="text-center py-5 text-light main-cont" style="background-image: url(./img/backgroundtop.png); background-size: cover; background-repeat: no-repeat;    background-attachment: fixed;">
       <h1>Welcome! This is your stats for Visual Studio Code!</h1>
-      <div class="container marketing" >
+      <div class="container marketing">
         <div id="item-list" class="row">
           <div class="item">
             <div class="item-content">
@@ -87,6 +87,34 @@
           </div>
           <div class="item">
             <div class="item-content">
+              <h2 class="item-title">Most frequent</h2>
+              <p class="item-description">Keyboard button you pressed the most.</p>
+              <div id="keyboardbutton0"><p class="item-metric"></p><div class="spinner-border" role="status"><span class="sr-only"></span></div></div>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-content">
+              <h2 class="item-title">2nd most frequent</h2>
+              <p class="item-description">Keyboard button you pressed 2nd the most.</p>
+              <div id="keyboardbutton1"><p class="item-metric"></p><div class="spinner-border" role="status"><span class="sr-only"></span></div></div>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-content">
+              <h2 class="item-title">3nd most frequent</h2>
+              <p class="item-description">Keyboard button you pressed 3rd the most.</p>
+              <div id="keyboardbutton2"><p class="item-metric"></p><div class="spinner-border" role="status"><span class="sr-only"></span></div></div>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-content">
+              <h2 class="item-title">4th most frequent</h2>
+              <p class="item-description">Keyboard button you pressed 4th the most.</p>
+              <div id="keyboardbutton3"><p class="item-metric"></p><div class="spinner-border" role="status"><span class="sr-only"></span></div></div>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-content">
               <h2 class="item-title">New lines</h2>
               <p class="item-description">Number of times you made a new line.</p>
               <div id="newline"><p class="item-metric"></p><div class="spinner-border" role="status"><span class="sr-only"></span></div></div>
@@ -94,20 +122,114 @@
           </div>
           <div class="item">
             <div class="item-content">
-              <h2 class="item-title">Most frequent</h2>
-              <p class="item-description">Keyboard button you preseed the most.</p>
-              <div id="keyboardbutton"><p class="item-metric"></p><div class="spinner-border" role="status"><span class="sr-only"></span></div></div>
+              <h2 class="item-title">The most active day</h2>
+              <p class="item-description">Your most active day in a week.</p>
+              <div id="activeday"><p class="item-metric"></p><div class="spinner-border" role="status"><span class="sr-only"></span></div></div>
             </div>
           </div>
-         <!-- /.row<div class="spinner-border" role="status">
-            <span class="sr-only"></span>
+          <div class="item">
+            <div class="item-content">
+              <h2 class="item-title">Distance traveled</h2>
+              <p class="item-description">The amount of pixels you traveled with mouse witin the Visual Studio Code.</p>
+              <div id="traveldistance"><p class="item-metric"></p><div class="spinner-border" role="status"><span class="sr-only"></span></div></div>
+            </div>
           </div>
-        </div> --> <!-- /.row -->
-        
+          <div class="item">
+            <div class="item-content">
+              <h2 class="item-title">Average press</h2>
+              <p class="item-description">The amount of seconds between keyboard usage.</p>
+              <div id="presstime"><p class="item-metric"></p><div class="spinner-border" role="status"><span class="sr-only"></span></div></div>
+            </div>
+          </div>
       </div>
     </div>
+    </div>
+    <div class="py-5 text-light main-cont bg-dark">
+      <div class="container marketing">
+        <h2>These are your most interesting sessions</h2>
+        <div id="item-list" class="row">
+          <div class="item text-center">
+            <div class="item-content">
+              <h2 class="item-title">Longest One</h2>
+              <p class="item-description">Duration</p>
+              <div id="longestsession"><p class="item-metric"></p><div class="spinner-border" role="status"><span class="sr-only"></span></div></div>
+              <button class="item-link" data-bs-toggle="modal" data-bs-target="#session" id="longestsessionbutton">Details</button>
+            </div>
+          </div>
+          <div class="item text-center">
+            <div class="item-content">
+              <h2 class="item-title">Early bird</h2>
+              <p class="item-description">Start time</p>
+              <div id="earlysession"><p class="item-metric"></p><div class="spinner-border" role="status"><span class="sr-only"></span></div></div>
+              <button class="item-link" data-bs-toggle="modal" data-bs-target="#session" id="earlysessionbutton">Details</button>
+            </div>
+          </div>
+          <div class="item text-center">
+            <div class="item-content">
+              <h2 class="item-title">Night owl</h2>
+              <p class="item-description">End time</p>
+              <div id="latesession"><p class="item-metric"></p><div class="spinner-border" role="status"><span class="sr-only"></span></div></div>
+              <button class="item-link" data-bs-toggle="modal" data-bs-target="#session" id="latesessionbutton">Details</button>
+            </div>
+          </div>
+          <div class="item text-center">
+            <div class="item-content">
+              <h2 class="item-title">Interesting..</h2>
+              <p class="item-description">Unique keys</p>
+              <div id="mostunique"><p class="item-metric"></p><div class="spinner-border" role="status"><span class="sr-only"></span></div></div>
+              <button class="item-link" data-bs-toggle="modal" data-bs-target="#session" id="mostuniquebutton">Details</button>
+            </div>
+          </div>
+
+      </div>
+    </div>
+
+
+    
   </main>
 </body>
+<div class="modal fade" id="session" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark">
+      <div class="modal-header">
+        <h5 class="modal-title text-light">Session id: <span id="sessionid"></span></h5>
+        <button type="button" class="btn-close btn-close-white btn-warning" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-dark">
+          <thead>
+            <tr>
+              <th>Mouse</th>
+            </tr>
+            <tr>
+              <th>Location</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+
+          <tbody id = "mousetablebody">
+            
+            <!-- Add more rows as needed -->
+          </tbody>
+          <thead>
+            <tr>
+              <th>Keyboard</th>
+            </tr>
+            <tr>
+              <th>Key</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+
+          <tbody id = "keyboardtablebody">
+            
+            <!-- Add more rows as needed -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 <script src="js/jquery-3.6.0.min.js"></script>
 <script src="js/bootstrap.bundle.min.js"></script>
 <script src="js/jquery.validate.min.js"></script>
