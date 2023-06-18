@@ -41,8 +41,13 @@ class SessionDao extends BaseDao{
   {
       return $this->query_unique(" SELECT COUNT(*) AS total_sessions FROM sessions WHERE user_id = :user_id LIMIT 1", ['user_id' => $user_id]);
   }
-
+  public function get_session_owner($id)
+  {
+      return $this->query_unique("SELECT user_id FROM sessions WHERE id = :id", ['id' => $id]);
+  }
+  public function get_sessions($id)
+  {
+      return $this->query("SELECT * FROM sessions WHERE user_id = :id;", ['id' => $id]);
+  }
 }
-
-
 ?>

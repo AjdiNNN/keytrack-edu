@@ -48,5 +48,13 @@ class SessionService extends BaseService
     {
         return $this->dao->get_total_sessions($user_id);
     }
+    public function get_session_owner($id)
+    {
+        return $this->dao->get_session_owner($id);
+    }
+    public function get_sessions($id)
+    {
+        return $this->dao->get_sessions($id);
+    }
 }
 ?>
