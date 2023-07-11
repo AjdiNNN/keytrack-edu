@@ -45,27 +45,11 @@ class SessionDao extends BaseDao{
   }
   public function get_early_start_session($id)
   {
-      return $this->query_unique("SELECT s.id, TIME_FORMAT(s.start, '%H:%i') AS earliest_start_time
-      FROM sessions s
-      JOIN (
-        SELECT MIN(start) AS min_start_time
-        FROM sessions
-        WHERE user_id = 10
-      ) AS min_start
-      ON s.start = min_start.min_start_time
-      WHERE s.user_id = :id", ['id' => $id]);
+      return $this->query_unique("SELECT id, MIN(TIME_FORMAT(start, '%H:%i')) AS earliest_start_time FROM sessions WHERE user_id = :id;", ['id' => $id]);
   }
   public function get_latest_end_session($id)
   {
-      return $this->query_unique("SELECT s.id, TIME_FORMAT(s.end, '%H:%i') AS latest_end_time
-      FROM sessions s
-      JOIN (
-        SELECT MAX(end) AS max_end_time
-        FROM sessions
-        WHERE user_id = :id
-      ) AS max_end
-      ON s.end = max_end.max_end_time
-      WHERE s.user_id = :id;", ['id' => $id]);
+      return $this->query_unique("SELECT id, MAX(TIME_FORMAT(end, '%H:%i')) AS latest_end_time FROM sessions WHERE user_id = :id;", ['id' => $id]);
   }
   public function get_most_active_day($user_id)
   {
